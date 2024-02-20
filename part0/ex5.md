@@ -1,4 +1,4 @@
-## Exersice 4
+## Exersice 5
 ```mermaid
 
 sequenceDiagram
@@ -6,9 +6,9 @@ sequenceDiagram
     participant server
     
 
-    browser ->>server : POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    browser ->>server : GET https://studies.cs.helsinki.fi/exampleapp/spa
     activate server
-    server-->>browser: New HTML document
+    server-->>browser: HTML document
     deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
@@ -16,7 +16,7 @@ sequenceDiagram
     server-->>browser: the css file
     deactivate server
 
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
     activate server
     server-->>browser: the JavaScript file
     deactivate server
