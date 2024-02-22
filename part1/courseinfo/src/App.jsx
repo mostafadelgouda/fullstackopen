@@ -1,15 +1,3 @@
-
-// const App = () => {
-  
-
-//   return (
-//     <div>
-//       <h1>{course}</h1>
-//       
-//       <p>Number of exercises {exercises1 + exercises2 + exercises3}</p>
-//     </div>
-//   )
-// }
 const Header = (props) => {
   console.log(props)
   return <h1>{props.course}</h1>
