@@ -1,7 +1,10 @@
+import { createLogger } from "vite"
+
 const Header = (props) => {
   console.log(props)
   return <h1>{props.course}</h1>
 }
+
 const Content = (props) => {
   return(
     <div>
