@@ -1,30 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import Form from './components/Form'
 import PersonList from './components/PersonList'
-import axios from 'axios'
+import personService from './services/persons'
+//import create from './services/persons'
 
-const hook = (setPersons) => {
-  console.log('effect')
-
-  const eventHandler = response => {
-    console.log('promise fulfilled')
-    setPersons(response.data)
-  }
-
-  const promise = axios.get('http://localhost:3001/persons')
-  promise.then(eventHandler)
-}
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [newFilter, setNewFilter] = useState('');
-  
+
   useEffect(() => {
-    hook(setPersons);
+    const fetchData = async () => {
+    
+      const fetchedPersons = await personService.getAll();
+      console.log("Fetched Persons:", fetchedPersons);
+      //if (Array.isArray(fetchedPersons)) {
+        setPersons(fetchedPersons);
+      //}
+    };
+    fetchData();
   }, []);
+
+  const deleteFromList = (id) => {
+    setPersons(persons.filter(person => person.id != id))
+  }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -37,12 +39,34 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault();
     const foundPerson = persons.find(person => person.name === newName);
-    if (foundPerson) {
-      alert(`${newName} is already added to phonebook`);
-      return;
+    // if (foundPerson) {
+    //   alert(`${newName} is already added to phonebook`);
+    //   return;
+    // }
+    const newPerson = { name: newName, number: newNumber, id: (persons.length + 1).toString() };
+    for(let i in persons){
+      console.log("ana hena ya jhone", persons[i].name, newPerson.name)
+      console.log(persons[i].name == newName)
+      if(persons[i].name == newName){
+        if (window.confirm(newName + ' is already added to phonebook, do you want to replace old number with the new one?')) {
+
+        
+          const newData = { name: newName, number: newNumber, id: persons[i].id };
+          personService.update(newData.id, newData)
+          //flag = 0
+          var updatedData = persons.filter(person => person.id != persons[i].id)
+          setPersons([...updatedData, newData]);
+        }
+        return
+      }
     }
-    const newPerson = { name: newName, number: newNumber, id: persons.length + 1 };
+    //pooooooooooooooost
+    personService.create(newPerson)
+    
     setPersons([...persons, newPerson]);
+    
+    
+    
     setNewName('');
     setNewNumber('');
   };
@@ -60,8 +84,8 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter newFilter = {newFilter} handleFilterChange = {handleFilterChange}/>
       
-      <Form newName = {newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} addName={addName}/>
-      <PersonList filteredPersons={filteredPersons}/>
+      <Form newName = {newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} addName={addName} />
+      <PersonList filteredPersons={filteredPersons} deletePerson = {deleteFromList}/>
 
     </div>
   );
