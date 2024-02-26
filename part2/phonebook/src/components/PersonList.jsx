@@ -14,7 +14,6 @@ const FilteredPerson = ({ person , deletePerson, setAddMessage}) => {
             setAddMessage(null)
           }, 5000)
         }
-        console.log('ana m4 hena ya jhone')
         
       }
     
