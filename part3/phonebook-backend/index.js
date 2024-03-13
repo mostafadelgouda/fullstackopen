@@ -2,8 +2,6 @@ const Person = require('./models/person')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
-
 const PORT = process.env.PORT || 3001
 require('dotenv').config()
 
@@ -28,26 +26,26 @@ app.use(morgan((tokens, req, res) => {
 
 app.get('/info', (request, response) => {
   Person.find({}).then(persons => {
-    response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${new Date()}</p>`);
+    response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${new Date()}</p>`)
     //response.json(persons)
   })
-    //response.send(`<p>Phonebook has info for ${data.length} people</p><p>${new Date()}</p>`);
+  //response.send(`<p>Phonebook has info for ${data.length} people</p><p>${new Date()}</p>`);
 
 })
 app.get('/api/persons/:id', (request, response) => {
-    Person.findById(request.params.id).then(result => {
-      response.send(result)
-    })
+  Person.findById(request.params.id).then(result => {
+    response.send(result)
+  })
   
-    // const ret = data.find(item => item.id === id)
-    // if(ret)
-    //     response.send(ret)
-    // else
-    //     response.status(404).end()
+  // const ret = data.find(item => item.id === id)
+  // if(ret)
+  //     response.send(ret)
+  // else
+  //     response.status(404).end()
 })
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -58,29 +56,29 @@ app.get('/api/persons', (request, response) => {
   })
 })
 app.put('/api/persons/:id', (request, response, next) => {
-  const body = request.body;
+  const body = request.body
 
   if (!body.name || !body.number) {
     return response.status(400).json({ 
       error: 'content missing' 
-    });
+    })
   }
 
   const updatedPerson = {
     name: body.name,
     number: body.number,
-  };
+  }
 
   Person.findByIdAndUpdate(request.params.id, updatedPerson, { new: true })
     .then(updatedPerson => {
       if (updatedPerson) {
-        response.json(updatedPerson);
+        response.json(updatedPerson)
       } else {
-        response.status(404).end();
+        response.status(404).end()
       }
     })
-    .catch(error => next(error));
-});
+    .catch(error => next(error))
+})
 
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
