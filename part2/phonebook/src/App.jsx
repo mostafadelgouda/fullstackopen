@@ -59,7 +59,7 @@ const App = () => {
     // }
     const newPerson = { name: newName, number: newNumber, id: (persons.length + 1).toString() };
     for(let i in persons){
-      console.log("ana hena ya jhone", persons[i].name, newPerson.name)
+      //console.log("ana hena ya jhone", persons[i].name, newPerson.name)
       console.log(persons[i].name == newName)
       if(persons[i].name == newName){
         if (window.confirm(newName + ' is already added to phonebook, do you want to replace old number with the new one?')) {
@@ -75,7 +75,10 @@ const App = () => {
       }
     }
     //pooooooooooooooost
-    personService.create(newPerson)
+    personService.create(newPerson).catch(error => {
+      setAddMessage(`Person validation failed Path name (${newPerson.name}) is shorter than the minimum allowed size (3)`)
+      return
+    })
     
     setPersons([...persons, newPerson]);
     
