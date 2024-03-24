@@ -20,6 +20,23 @@ const initialBlogs = [
     likes: 3,
   }
 ]
+const initialUsers = [
+  {
+    username: "username1",
+    name: "name1",
+    password: "password1"
+  },
+  {
+    username: "username2",
+    name: "name2",
+    password: "password2"
+  },
+  {
+    username: "username3",
+    name: "name3",
+    password: "password3"
+  },
+]
 
 // const nonExistingId = async () => {
 //   const blog = new Blog({ content: 'willremovethissoon' })
@@ -75,5 +92,6 @@ module.exports = {
   dummy,
   favoriteBlog,
   initialBlogs,
-  blogsInDb
+  blogsInDb,
+  initialUsers,
 }

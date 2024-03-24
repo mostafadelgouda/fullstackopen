@@ -1,29 +1,53 @@
 const blogsRouter = require('express').Router()
-const blog = require('../models/blog')
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
+
+// const getTokenFrom = request => {
+//   const authorization = request.get('authorization')
+//   if (authorization && authorization.startsWith('Bearer ')) {
+//     return authorization.replace('Bearer ', '')
+//   }
+//   return null
+// }
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
 blogsRouter.post('/', async (request, response) => {
     const blog = new Blog(request.body)
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    const user = await User.findById(decodedToken.id)
+    blog.user = user._id
+
     try{
-        const savedNote = await blog.save()
-        response.status(201).json(savedNote)
+        const savedBlog = await blog.save()
+        response.status(201).json(savedBlog)
     }catch(error){
         response.status(400).json({ error: error.message })
     }
 })
 blogsRouter.delete('/:id', async (request, response) => {
     const id = request.params.id; // Correct way to access parameters from URL
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
     try {
         const blog = await Blog.findByIdAndDelete(id);
         if (!blog) {
             return response.status(404).json({ error: 'Blog not found' });
         }
+        if (blog.user !== decodedToken.id) {
+          return response.status(403).json({ error: 'You are not authorized to delete this blog' });
+        }
+        
         response.status(204).end(); // Indicates successful deletion with no content in response
     } catch (error) {
         console.log("ana hna ya jhone")
@@ -39,31 +63,12 @@ blogsRouter.put('/:id', async (request, response) => {
       url: body.url,
     }
   
+    
     const ss = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
       .then(updatedBlog => {
         response.json(updatedBlog)
       })
       .catch(error => next(error))
   })
-// blogsRouter.put('/:id', async (request, response) => {
-//    blogsRouter.put('/:id', async (request, response) => {
-//     const id = request.params.id;
-//     const update = request.body; // Use the request body directly for update
-//     try {
-//         // Ensure that the update operation returns the updated blog entry
-//         const updatedBlog = await Blog.findByIdAndUpdate(id, update, { new: true });
-
-//         if (!updatedBlog) {
-//             return response.status(404).json({ error: 'Blog not found' });
-//         }
-
-//         response.status(204).end(); // Indicates successful update with no content in response
-//     } catch (error) {
-//         console.error(error); // Log the error message to the console
-//         response.status(400).json({ error: 'Failed to update blog entry' });
-//     }
-// })
-
-// })
 
 module.exports = blogsRouter

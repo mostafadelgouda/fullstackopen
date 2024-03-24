@@ -1,24 +1,27 @@
 const mongoose = require('mongoose')
 const config = require('../utils/config')
 
-const blogSchema = new mongoose.Schema({
-    title: {
+const userSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true,
+        minLength: 3,
+        unique: true,
+    },
+    name: {
         type: String,
         required: true
     },
-    author: String,
-    url: {
+    password: {
         type: String,
         required: true
     },
-    
-    likes: Number,
-    user: 
+    blogs:[ 
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Blog'
       }
-    
+    ]
 },
 {
     toJSON: {
@@ -31,9 +34,16 @@ const blogSchema = new mongoose.Schema({
     },
     id: true // Enable the id option to use 'id' as the unique identifier property
   })
-
-const Blog = mongoose.model('Blog', blogSchema)
+// blogSchema.set('toJSON', {
+//     transform: (document, returnedObject) => {
+//       returnedObject.id = returnedObject._id.toString()
+//       delete returnedObject._id
+//       delete returnedObject.__v
+//     }
+//   })
+  
+const Blog = mongoose.model('User', userSchema)
 
 mongoose.connect(config.MONGODB_URI)
 
-module.exports = mongoose.model('Blog', blogSchema)
+module.exports = mongoose.model('User', userSchema)
