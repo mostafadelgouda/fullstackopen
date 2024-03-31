@@ -12,8 +12,13 @@ loginRouter.post('/', async (request, response) => {
   const passwordCorrect = user === null
     ? false
     : await bcrypt.compare(password, user.password)
+
+  
+  //console.log(passwordCorrect)
 //console.log("ana hna ya jhone")
   if (!(user && passwordCorrect)) {
+    //console.log(passwordCorrect)
+  //console.log(user)
     return response.status(401).json({
       error: 'invalid username or password'
     })
@@ -25,7 +30,7 @@ loginRouter.post('/', async (request, response) => {
   }
   
   const token = jwt.sign(userForToken, config.SECRET)
-
+  console.log(token)
   response
     .status(200)
     .send({ token, username: user.username, name: user.name })
